@@ -10,6 +10,36 @@ $user_data = check_login($conn);
 
 $_SESSION;
 
+// get input post
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['send-post']) && !empty($_POST['create-post'])) {
+
+    // post infos
+    $post_text = $_POST['create-post'];
+
+    // id user login
+    $user_id = $user_data['id'];
+
+    // send db
+    pg_query($conn, "INSERT INTO posts (user_id, post_text) VALUES ('$user_id', '$post_text')");
+
+    // reload for home
+    header("Location: {$_SERVER['PHP_SELF']}");
+    exit();
+}
+
+
+
+// get all posts
+$result = pg_query($conn, "SELECT users.user_name, posts.post_date, posts.post_text, posts.post_id, posts.post_like
+                           FROM posts 
+                           INNER JOIN users ON posts.user_id = users.id
+                           ORDER BY posts.post_id DESC");
+
+$posts = pg_fetch_all($result) ?: [];
+
+// end db
+pg_close($conn);
+
 ?>
 
 <!DOCTYPE html>
@@ -21,6 +51,8 @@ $_SESSION;
     <title>Scribbli</title>
 
     <link rel="stylesheet" href="css/main.css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 </head>
 
 <body>
@@ -40,8 +72,7 @@ $_SESSION;
             <div class="create">
                 <label for="create-post" class="btn btn-primary">Criar</label>
                 <div class="profie-picture">
-                    <img src="https://as1.ftcdn.net/v2/jpg/05/16/27/58/1000_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg"
-                        alt="" />
+                    <img src="https://as1.ftcdn.net/v2/jpg/05/16/27/58/1000_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg" alt="" />
                 </div>
             </div>
         </div>
@@ -52,8 +83,7 @@ $_SESSION;
             <div class="left">
                 <a href="" class="profie">
                     <div class="profie-picture">
-                        <img src="https://as1.ftcdn.net/v2/jpg/05/16/27/58/1000_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg"
-                            alt="" />
+                        <img src="https://as1.ftcdn.net/v2/jpg/05/16/27/58/1000_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg" alt="" />
                     </div>
 
                     <div class="handle">
@@ -80,8 +110,7 @@ $_SESSION;
                         <div class="notifications-popup">
                             <div>
                                 <div class="profie-picture">
-                                    <img src="https://as1.ftcdn.net/v2/jpg/05/16/27/58/1000_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg"
-                                        alt="" />
+                                    <img src="https://as1.ftcdn.net/v2/jpg/05/16/27/58/1000_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg" alt="" />
                                 </div>
 
                                 <div class="notifications-body">
@@ -95,8 +124,7 @@ $_SESSION;
                     </a>
 
                     <a class="menu-item" id="message">
-                        <span><i class="fa-solid fa-message" id=""><small
-                                    class="notification-count">6</small></i></span>
+                        <span><i class="fa-solid fa-message" id=""><small class="notification-count">6</small></i></span>
                         <h3>Messages</h3>
                     </a>
 
@@ -108,146 +136,63 @@ $_SESSION;
             </div>
 
             <div class="center">
-                <form class="create-post">
+                <form class="create-post" method="POST">
                     <div class="profie-picture">
-                        <img src="https://as1.ftcdn.net/v2/jpg/05/16/27/58/1000_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg"
-                            alt="" />
+                        <img src="https://as1.ftcdn.net/v2/jpg/05/16/27/58/1000_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg" alt="" />
                     </div>
 
-                    <input type="text" placeholder="No que ta pensando?" id="create-post" />
-                    <input type="submit" value="Post" class="btn btn-primary" />
+                    <input type="text" placeholder="No que ta pensando?" id="create-post" name="create-post" autocomplete="off" />
+                    <input type="submit" value="Post" class="btn btn-primary" name="send-post" id="send-post" />
                 </form>
 
                 <div class="feeds">
-                    <div class="feed">
-                        <div class="head">
-                            <div class="user">
-                                <div class="profie-picture">
-                                    <img src="https://as1.ftcdn.net/v2/jpg/05/16/27/58/1000_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg"
-                                        alt="" />
+
+                    <?php foreach ($posts as $post) : ?>
+                        <div class="feed">
+                            <div class="head">
+                                <div class="user">
+                                    <div class="profie-picture">
+                                        <img src="https://as1.ftcdn.net/v2/jpg/05/16/27/58/1000_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg" alt="" />
+                                    </div>
+
+                                    <div class="ingo">
+                                        <h3><?= $post['user_name']; ?></h3>
+                                        <small><?= $post['post_date'] ?></small>
+                                    </div>
                                 </div>
 
-                                <div class="ingo">
-                                    <h3>Joao</h3>
-                                    <small>Dubai, 223</small>
-                                </div>
+                                <span class="id"><i class="fa-solid fa-ellipsis"></i></span>
                             </div>
 
-                            <span class="id"><i class="fa-solid fa-ellipsis"></i></span>
-                        </div>
-
-                        <div class="caption">
-                            <p>
-                                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                                Perferendis deleniti fuga expedita similique porro veniam
-                                officiis! Voluptatum necessitatibus esse dolorum.
-                            </p>
-                        </div>
-
-                        <div class="photo">
-                            <img src="https://images.pexels.com/photos/3776659/pexels-photo-3776659.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-                                alt="" />
-                        </div>
-
-                        <div class="action-button">
-                            <div class="interaction-button">
-                                <span><i class="fa-regular fa-heart"></i></span>
-
-                                <span><i class="fa-regular fa-comment"></i></span>
+                            <div class="caption">
+                                <p><?= $post['post_text']; ?>
+                                </p>
                             </div>
-                        </div>
 
-                        <div class="comments text-muted">
-                            ver todos os 900 comentarios
-                        </div>
-                    </div>
+                            <div class="photo">
+                                <img src="" alt="" />
+                            </div>
 
-                    <div class="feed">
-                        <div class="head">
-                            <div class="user">
-                                <div class="profie-picture">
-                                    <img src="https://as1.ftcdn.net/v2/jpg/05/16/27/58/1000_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg"
-                                        alt="" />
+                            <div class="action-button">
+                                <div class="interaction-button">
+
+                                    <!-- Adicione um atributo de data com o ID do post -->
+                                    <button class="like-button" id="btn-post" data-post-id="<?= $post['post_id']; ?>">
+                                        <span id="post-like"><i style="margin-right: 0.4rem;" class="fa-regular fa-heart"></i><?= $post['post_like']; ?></span></button>
                                 </div>
 
-                                <div class="ingo">
-                                    <h3>Joao</h3>
-                                    <small>Dubai, 223</small>
-                                </div>
                             </div>
 
-                            <span class="id"><i class="fa-solid fa-ellipsis"></i></span>
+
                         </div>
+                    <?php endforeach; ?>
 
-                        <div class="caption">
-                            <p>
-                                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                                Perferendis deleniti fuga expedita similique porro veniam
-                                officiis! Voluptatum necessitatibus esse dolorum.
-                            </p>
-                        </div>
 
-                        <div class="photo">
-                            <img src="https://images.pexels.com/photos/3776659/pexels-photo-3776659.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-                                alt="" />
-                        </div>
-
-                        <div class="action-button">
-                            <div class="interaction-button">
-                                <span><i class="fa-regular fa-heart"></i></span>
-
-                                <span><i class="fa-regular fa-comment"></i></span>
-                            </div>
-                        </div>
-
-                        <div class="comments text-muted">
-                            ver todos os 900 comentarios
-                        </div>
-                    </div>
-
-                    <div class="feed">
-                        <div class="head">
-                            <div class="user">
-                                <div class="profie-picture">
-                                    <img src="https://as1.ftcdn.net/v2/jpg/05/16/27/58/1000_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg"
-                                        alt="" />
-                                </div>
-
-                                <div class="ingo">
-                                    <h3>Joao</h3>
-                                    <small>Dubai, 223</small>
-                                </div>
-                            </div>
-
-                            <span class="id"><i class="fa-solid fa-ellipsis"></i></span>
-                        </div>
-
-                        <div class="caption">
-                            <p>
-                                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                                Perferendis deleniti fuga expedita similique porro veniam
-                                officiis! Voluptatum necessitatibus esse dolorum.
-                            </p>
-                        </div>
-
-                        <div class="photo">
-                            <img src="https://images.pexels.com/photos/3776659/pexels-photo-3776659.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-                                alt="" />
-                        </div>
-
-                        <div class="action-button">
-                            <div class="interaction-button">
-                                <span><i class="fa-regular fa-heart"></i></span>
-
-                                <span><i class="fa-regular fa-comment"></i></span>
-                            </div>
-                        </div>
-
-                        <div class="comments text-muted">
-                            ver todos os 900 comentarios
-                        </div>
-                    </div>
                 </div>
+            </div>
+
+            <div class="left">
+
             </div>
         </div>
     </main>
@@ -277,6 +222,7 @@ $_SESSION;
     <script src="https://kit.fontawesome.com/77ebc8126c.js" crossorigin="anonymous"></script>
 
     <script src="js/main.js"></script>
+
 </body>
 
 </html>

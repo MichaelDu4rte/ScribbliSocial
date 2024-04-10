@@ -121,3 +121,38 @@ document.addEventListener('DOMContentLoaded', function() {
     // Desativar o scroll da página quando o preload estiver visível
     disableScroll();
 });
+
+
+$(document).ready(function() {
+    // Adiciona um evento de clique ao botão de like
+    $(".like-button").click(function() {
+
+
+
+        // Obtém o ID do post do atributo de data
+        var postId = $(this).data("post-id");
+        console.log("Post ID:",
+            postId); // Verifique se o ID do post está sendo capturado corretamente
+        // Envia uma requisição AJAX para o servidor
+        $.ajax({
+            url: "update_like.php", // Arquivo PHP para processar a requisição
+            type: "POST",
+            data: {
+                post_id: postId
+            }, // Dados enviados para o servidor
+            success: function(response) {
+                console.log("Response:",
+                    response); // Verifique se o servidor está respondendo corretamente
+
+                location.reload();
+
+
+
+            },
+            error: function(xhr, status, error) {
+                console.error("Error:",
+                    error); // Verifique se há erros na requisição AJAX
+            }
+        });
+    });
+});
