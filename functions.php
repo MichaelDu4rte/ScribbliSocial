@@ -21,31 +21,6 @@ function check_login($conn)
     die;
 }
 
-
-function random_num($length)
-{
-
-    $text = "";
-    if ($length < 5) {
-        $length = 5;
-    }
-
-    $len = rand(4, $length);
-
-    for ($i = 0; $i < $len; $i++) {
-
-        $text .= rand(0, 9);
-    }
-
-    return $text;
-}
-
-function checkEmailCreate($conn, $user_email)
-{
-}
-
-
-
 function userLoginOrRegister($conn)
 {
     if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST['register'])) {
@@ -111,4 +86,9 @@ function userLoginOrRegister($conn)
             }
         }
     }
+}
+
+
+function viewPosts($conn)
+{
 }
