@@ -28,6 +28,7 @@ function userLoginOrRegister($conn)
         $user_email = $_POST['user_email'];
         $user_name = $_POST['user_name'];
         $password = $_POST['password'];
+        $user_image = 'images/profiePlaceholder.jpg';
 
         if (!empty($user_email) && !empty($password) && !empty($user_name)) {
 
@@ -52,7 +53,7 @@ function userLoginOrRegister($conn)
                 $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
                 // Inserir dados no banco de dados
-                $query = "INSERT INTO users (user_id, user_name, user_email, password) VALUES ('$user_id', '$user_name', '$user_email', '$hashed_password')";
+                $query = "INSERT INTO users (user_id, user_name, user_email, password, user_image) VALUES ('$user_id', '$user_name', '$user_email', '$hashed_password', '$user_image')";
                 pg_query($conn, $query);
 
                 header("Location: index.php");
@@ -89,6 +90,40 @@ function userLoginOrRegister($conn)
 }
 
 
-function viewPosts($conn)
+function updateProfie($conn)
 {
+    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["btn-salve"])) {
+
+
+        // Obtém os valores do formulário
+        $user_name = $_POST["name"];
+        $user_email = $_POST["email"];
+        $user_data = check_login($conn);
+
+        // Pasta onde as imagens serão armazenadas
+        $target_dir = "images/";
+
+        // Nome da imagem
+        $image = basename($_FILES["image"]["name"]);
+
+        $image_extension = pathinfo($image, PATHINFO_EXTENSION);
+
+        // image name
+        $custom_image_name = $user_name . "_" . $user_data['id'] . "." . $image_extension;
+
+        // Caminho completo para a imagem
+        $target_file = $target_dir . $custom_image_name;
+
+        if (move_uploaded_file($_FILES["image"]["tmp_name"], $target_file)) {
+            // Prepara a instrução SQL para atualizar os dados do usuário
+            $sql = "UPDATE users SET user_name='$user_name', user_email='$user_email', user_image='$target_file' WHERE id = {$user_data['id']}";
+
+            // Executa a instrução SQL
+            $result = pg_query($conn, $sql);
+
+            header("Location: home.php");
+        } else {
+            header("Location: home.php");
+        }
+    }
 }

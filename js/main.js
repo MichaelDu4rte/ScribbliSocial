@@ -6,6 +6,9 @@ const bg1 = document.querySelector('.bg-1');
 const bg2 = document.querySelector('.bg-2');
 const bg3 = document.querySelector('.bg-3');
 
+var profileLink = document.getElementById("profie");
+var modal = document.getElementById("user-info");
+
 const changeActiveItem = () => menuItems.forEach(item => item.classList.remove('active'));
 
 // Attaches click event listeners to menu items
@@ -123,36 +126,16 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
-$(document).ready(function() {
-    // Adiciona um evento de clique ao botão de like
-    $(".like-button").click(function() {
 
-
-
-        // Obtém o ID do post do atributo de data
-        var postId = $(this).data("post-id");
-        console.log("Post ID:",
-            postId); // Verifique se o ID do post está sendo capturado corretamente
-        // Envia uma requisição AJAX para o servidor
-        $.ajax({
-            url: "update_like.php", // Arquivo PHP para processar a requisição
-            type: "POST",
-            data: {
-                post_id: postId
-            }, // Dados enviados para o servidor
-            success: function(response) {
-                console.log("Response:",
-                    response); // Verifique se o servidor está respondendo corretamente
-
-                location.reload();
-
-
-
-            },
-            error: function(xhr, status, error) {
-                console.error("Error:",
-                    error); // Verifique se há erros na requisição AJAX
-            }
-        });
-    });
+// Quando o usuário clicar no link do perfil, exibe o modal
+profileLink.addEventListener("click", function(event) {
+    event.preventDefault(); // Impede o comportamento padrão do link
+    modal.style.display = "block";
 });
+
+// Fecha o modal se o usuário clicar fora da área do modal
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}

@@ -30,13 +30,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['send-post']) && !empty
 
 
 // get all posts
-$result = pg_query($conn, "SELECT users.user_name, users.user_image, posts.user_id, posts.post_date, posts.post_text, posts.post_id, posts.post_like
+$result = pg_query($conn, "SELECT users.user_name, users.user_image, posts.post_date, posts.post_text, posts.post_id, posts.post_like
                            FROM posts 
                            INNER JOIN users ON posts.user_id = users.id
                            ORDER BY posts.post_id DESC");
 
 $posts = pg_fetch_all($result) ?: [];
 
+
+if (isset($_GET['user_id']) && !empty($_GET['user_id'])) {
+    // Obtém o ID do usuário da URL
+    $user_id = $_GET['user_id'];
+
+    // Executa a consulta SQL usando o ID do usuário
+    $result = pg_query($conn, "SELECT users.user_name, users.user_image, posts.post_date, posts.post_text, posts.post_id, posts.post_like
+                               FROM posts 
+                               INNER JOIN users ON posts.user_id = users.id
+                               WHERE users.id = $user_id
+                               ORDER BY posts.post_id DESC");
+
+    $profie = pg_fetch_all($result) ?: [];
+}
 
 updateProfie($conn);
 
@@ -65,7 +79,7 @@ pg_close($conn);
 
     <nav>
         <div class="container">
-            <a href="home.php" class="logo">
+            <a href="home.php">
                 <h2 class="logo"><img src="images/logo.png" alt="" />Scribbli</h2>
             </a>
 
@@ -86,7 +100,6 @@ pg_close($conn);
     <main class="">
         <div class="container">
             <div class="left">
-
                 <a href="profie.php?user_id=<?= $user_data['id'] ?>" class="profie">
                     <div class="profie-picture">
                         <img src="<?= $user_data['user_image'] ?>" alt="" />
@@ -97,10 +110,8 @@ pg_close($conn);
                     </div>
                 </a>
 
-
-
                 <div class="sidebar">
-                    <a class="menu-item active" id="home">
+                    <a class="menu-item active" id="home" href="home.php">
                         <span><i class="fa-solid fa-house"></i></span>
                         <h3>Home</h3>
                     </a>
@@ -148,30 +159,51 @@ pg_close($conn);
             </div>
 
             <div class="center">
-                <form class="create-post" method="POST">
-                    <div class="profie-picture">
-                        <img src="<?= $user_data['user_image'] ?>" alt="" />
+                <div class="profie-container">
+
+                    <div class="profie-banner">
+                        <img class="cover-img" src="https://as1.ftcdn.net/v2/jpg/04/10/34/54/1000_F_410345403_tV5hpFLJ7VCSgsAYJRC74tG4DA9LTXyC.jpg" alt="">
+
                     </div>
 
-                    <input type="text" placeholder="No que ta pensando?" id="create-post" name="create-post" autocomplete="off" />
-                    <input type="submit" value="Post" class="btn btn-primary" name="send-post" id="send-post" />
-                </form>
+                    <?php if (!empty($profie)) : ?>
+                        <div class="profie-details">
+                            <?php $profie_user = $profie[0]; // Apenas um dos usuários é suficiente para exibir os detalhes do perfil 
+                            ?>
+                            <div class="profie-details-left">
+                                <div class="profie-details-row">
+                                    <img src="<?= $profie_user['user_image']; ?>" alt="" class="profie-details-image">
+                                    <div>
+                                        <h3><?= $profie_user['user_name']; ?></h3>
+
+                                        <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Nostrum, a.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="profie-deitals-right">
+                                <button type="button"><i class="fa-solid fa-message"></i>Message</button>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+
+                </div>
+
+
 
                 <div class="feeds">
 
-                    <?php foreach ($posts as $post) : ?>
+                    <?php foreach ($profie as $profie_user) : ?>
                         <div class="feed">
+
                             <div class="head">
                                 <div class="user">
                                     <div class="profie-picture">
-                                        <a href="profie.php?user_id=<?= $post['user_id'] ?>"><img src="<?= $post['user_image']; ?>" alt="" /></a>
-
-
+                                        <img src="<?= $profie_user['user_image']; ?>" alt="" />
                                     </div>
 
                                     <div class="ingo">
-                                        <h3><?= $post['user_name'] ?></h3>
-                                        <small><?= $post['post_date'] ?></small>
+                                        <h3><?= $profie_user['user_name'] ?></h3>
+                                        <small><?= $profie_user['post_date'] ?></small>
                                     </div>
                                 </div>
 
@@ -179,20 +211,16 @@ pg_close($conn);
                             </div>
 
                             <div class="caption">
-                                <p><?= $post['post_text']; ?>
+                                <p><?= $profie_user['post_text']; ?>
                                 </p>
                             </div>
 
-                            <div class="photo">
-                                <img alt="" />
-                            </div>
-
-                            <div class="action-button">
+                            <div class="action-button" style="margin-top: 0.6rem;">
                                 <div class="interaction-button">
 
                                     <!-- Adicione um atributo de data com o ID do post -->
-                                    <button class="like-button" id="btn-post" data-post-id="<?= $post['post_id']; ?>">
-                                        <span id="post-like"><i style="margin-right: 0.4rem;" class="fa-regular fa-heart"></i><?= $post['post_like']; ?></span></button>
+                                    <button class="like-button" id="btn-post" data-post-id="<?= $profie_user['post_id']; ?>">
+                                        <span id="post-like"><i style="margin-right: 0.4rem;" class="fa-regular fa-heart"></i><?= $profie_user['post_like']; ?></span></button>
                                 </div>
 
                             </div>
@@ -201,14 +229,12 @@ pg_close($conn);
                         </div>
                     <?php endforeach; ?>
 
+                </div>
+
+                <div class="left">
 
                 </div>
             </div>
-
-            <div class="left">
-
-            </div>
-        </div>
     </main>
 
     <div class="customize-theme">

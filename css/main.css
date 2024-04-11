@@ -47,6 +47,7 @@ body {
 }
 
 
+
 #preload {
     background: var(--color-light);
     background-size: 10%;
@@ -76,6 +77,7 @@ body {
 
 .profie-picture {
     width: 2.8rem;
+    height: 2.2rem;
     aspect-ratio: 1/1;
     border-radius: 50%;
     overflow: hidden;
@@ -84,6 +86,7 @@ body {
 img {
     display: block;
     width: 100%;
+    height: 100%;
 }
 
 .btn {
@@ -117,6 +120,8 @@ img {
 .logo {
     display: flex;
     align-items: center;
+    color: var(--color-dark);
+
 }
 
 .logo  img {
@@ -232,6 +237,10 @@ main .container .left .profie {
     position: relative;
 }
 
+#logout h3 {
+    color: var(--color-dark);
+}
+
 .left .sidebar .notification-count {
     background: var(--color-danger);
     color: white;
@@ -329,6 +338,68 @@ main .container .left .profie {
 
 
 
+/* ------- PROFIE SECTION ------- */
+
+
+.profie-banner {
+    width: 100%;
+    height: 250px;
+}
+
+.profie-container .cover-img{
+    width: 100%;
+    border-radius: 10px;
+    margin-bottom: 14px;
+    height: 100%;
+    
+}
+
+
+.profie-details {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    background: var(--color-white);
+    padding: 20px;
+    border-radius: 5px;
+}
+
+.profie-details-row {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.profie-details-row img {
+    width: 150px;
+    margin-right: 15px;
+    border-radius: 5px;
+    margin-bottom: 0.6rem;
+}
+
+.profie-details-row div h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.profie-deitals-right button {
+    background: var(--color-primary);
+    padding: 20px 10px;
+    display: inline-block;
+    align-items: center;
+    color: #fff;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+}
+
+.profie-deitals-right button i {
+    margin-right: 5px;
+    font-size: 15px;
+
+}
+
+
+
 /* ------- MAIN CENTER ------- */
 
 .center .create-post {
@@ -405,7 +476,7 @@ main .container .left .profie {
 /* ------- THEME MODAL ------- */
 
 
-.customize-theme {
+.customize-theme{
     background: rgba(22, 22, 22, 0.5);
     width: 100vw;
     height: 100vh;
@@ -420,18 +491,14 @@ main .container .left .profie {
     display: none;
 }
 
+
+
 .customize-theme .card {
     background-color: var(--color-white);
     padding: 3rem;
     border-radius: var(--card-border-radius);
-    width: 50%;
+    width: 25%;
 }
-
-
-
-
-
-/* ------- THEME MODAL BACKGROUND ------- */
 
 .customize-theme .background {
     margin-top: 2rem;
@@ -457,7 +524,6 @@ main .container .left .profie {
 }
 
 
-
 .customize-theme .choose-bg > div.active {
     border: 2px solid var(--color-primary);
 }
@@ -466,7 +532,6 @@ main .container .left .profie {
     margin-left: 0.5rem;
 }
 
-
 .customize-theme .choose-bg > div span {
     width: 2rem;
     height: 2rem;
@@ -474,7 +539,6 @@ main .container .left .profie {
     border-radius: 50%;
     margin-right: 0rem;
 } 
-
 
 .customize-theme .choose-bg .bg-1 {
     background: white;
@@ -492,7 +556,90 @@ main .container .left .profie {
 }
 
 
+/* ------- THEME MODAL EDIT PROFIE ------- */
 
+#user-info {
+    background: rgba(22, 22, 22, 0.5);
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    text-align: center;
+    place-items: center;
+    display: none;
+}
+
+#user-info  .container{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    max-width: 430px;
+    width: 100%;
+    background: var(--color-white);
+    border-radius: var(--card-border-radius);
+    box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+  }
+
+  #user-info input[type="file"] {
+    display: none;
+  }
+  
+  #user-info .custom-file-upload {
+    border: 1px solid #ccc;
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+  }
+
+
+  #user-info .container .form{
+    padding: 2rem;
+  }
+
+  #user-info .form h1{
+    font-size: 2rem;
+    font-weight: 500;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: var(--color-dark);
+  }
+
+  #user-info  .form input{
+     height: 60px;
+     width: 100%;
+     padding: 0 15px;
+     font-size: 17px;
+     margin-bottom: 1.3rem;
+     border: 1px solid #ddd;
+     border-radius: 6px;
+     outline: none;
+     color: var(--color-dark);
+     background-color: var(--color-white);
+   }
+
+   #user-info .form input:focus{
+     box-shadow: 0 1px 0 rgba(0,0,0,0.2);
+   }
+   
+  
+  #user-info .form input.button{
+    color: #fff;
+    background: var(--color-primary);
+    font-size: 1.2rem;
+    font-weight: 500;
+    letter-spacing: 1px;
+    margin-top: 1.7rem;
+    cursor: pointer;
+    transition: 0.4s;
+    border: none;
+  }
+  #user-info .form input.button:hover{
+    opacity: 0.8;
+  }
+ 
 
 /* ------- RESPONSIVE ------- */
 
@@ -596,9 +743,29 @@ main .container .left .profie {
         height: 40px;
     }
 
+    .feed .profie-picture {
+        display: block;
+    }
+
     .profie-picture {
         display: none;
     }
+
+    .form-box .progress {
+        flex: 1 0 35%;
+        min-width: 300px;
+        padding: 3em;
+    }
+
+    #user-info  .container{
+       
+        max-width: 290px;
+        width: 100%;
+     
+      }
+
+     
+    
    
   }
   
