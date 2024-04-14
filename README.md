@@ -9,12 +9,6 @@ Scribbli é uma rede social completa e moderna
 ![alt text](https://i.imgur.com/UZVORUc.png)
 ![alt text](https://i.imgur.com/wLUFNYb.png)
 ![alt text](https://i.imgur.com/LeMf4TK.png)
-![alt text](https://imgur.com/hb6n2RR)
-![alt text](https://imgur.com/DZbFkQK)
-![alt text](https://imgur.com/tY3e3fZ)
-![alt text](https://imgur.com/gtNzFJl)
-
-
 
 ## Funcionalidades
 
