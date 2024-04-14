@@ -8,8 +8,9 @@ require_once("functions.php");
 // check login true
 $user_data = check_login($conn);
 
-$_SESSION;
 
+
+$_SESSION;
 // get input post
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['send-post']) && !empty($_POST['create-post'])) {
 
@@ -29,6 +30,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['send-post']) && !empty
 
 
 
+
+
+
 // get all posts
 $result = pg_query($conn, "SELECT users.user_name, users.user_image, posts.user_id, posts.post_date, posts.post_text, posts.post_id, posts.post_like
                            FROM posts 
@@ -40,6 +44,17 @@ $posts = pg_fetch_all($result) ?: [];
 
 updateProfie($conn);
 
+if (isset($_GET['user_id'])) {
+    // Obtém e escapa o valor de 'user_id' para evitar injeção de SQL
+    $user_id = pg_escape_string($conn, $_GET['user_id']);
+
+    // Executa a consulta apenas se 'user_id' estiver presente na URL
+    $sql = pg_query($conn, "SELECT * FROM users WHERE user_id = {$user_id}");
+
+    if (pg_num_rows($sql) > 0) {
+        $row = pg_fetch_assoc($sql);
+    }
+}
 // end db
 pg_close($conn);
 
@@ -63,25 +78,7 @@ pg_close($conn);
         <img src="images/preload.gif" alt="" />
     </div>
 
-    <nav>
-        <div class="container">
-            <a href="home.php" class="logo">
-                <h2 class="logo"><img src="images/logo.png" alt="" />Scribbli</h2>
-            </a>
-
-            <div class="search-bar">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="search" placeholder="pesquisar pessoas" />
-            </div>
-
-            <div class="create">
-                <label for="create-post" class="btn btn-primary">Criar</label>
-                <div class="profie-picture">
-                    <img src="<?= $user_data['user_image'] ?>" alt="" />
-                </div>
-            </div>
-        </div>
-    </nav>
+    <?php require_once("templates/nav.php") ?>
 
     <main class="">
         <div class="container">
@@ -107,7 +104,7 @@ pg_close($conn);
 
                     <a class="menu-item" id="profie">
                         <span><i class="fa-solid fa-user"></i></span>
-                        <h3>Perfil</h3>
+                        <h3>Editar</h3>
                     </a>
 
                     <a class="menu-item" id="notification">
@@ -191,7 +188,7 @@ pg_close($conn);
                                 <div class="interaction-button">
 
                                     <!-- Adicione um atributo de data com o ID do post -->
-                                    <button class="like-button" id="btn-post" data-post-id="<?= $post['post_id']; ?>">
+                                    <button class="like-button " id="btn-post" data-post-id="<?= $post['post_id']; ?>" data-user-id="<?= $user_data['id']; ?>">
                                         <span id="post-like"><i style="margin-right: 0.4rem;" class="fa-regular fa-heart"></i><?= $post['post_like']; ?></span></button>
                                 </div>
 
@@ -211,95 +208,13 @@ pg_close($conn);
         </div>
     </main>
 
-    <div class="customize-theme">
-        <div class="card">
-            <h2>Configurar Layout</h2>
 
-            <div class="background">
-                <h4>Background</h4>
 
-                <div class="choose-bg">
-                    <div class="bg-1 active">
-                        <span class=""></span>
-                        <h5 for="bg-1">Light</h5>
-                    </div>
-
-                    <div class="bg-2">
-                        <span class=""></span>
-                        <h5 for="bg-2">Dim</h5>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <section id="user-info" class="modal-user">
-        <div class="container">
-
-            <div class="user-config form">
-                <h1>Alterar dados</h1>
-
-                <form action="#" method="POST" name="user-info-form" enctype="multipart/form-data">
-                    <label for="Nome">Nome:</label>
-                    <input type="text" value="<?= $user_data['user_name'] ?>" name="name" required>
-                    <label for="">Email:</label>
-                    <input type="email" value="<?= $user_data['user_email'] ?>" name="email" required>
-
-                    <label for="file-upload" class="custom-file-upload">Mudar foto de perfil</label>
-                    <input id="file-upload" type="file" accept=".jpg, .jpeg, .png" name="image" />
-
-                    <input type="submit" class="button" value="Salvar" name="btn-salve">
-                </form>
-
-            </div>
-
-        </div>
-    </section>
+    <?php require_once("templates/footer.php") ?>
 
 
 
-    <script src="https://kit.fontawesome.com/77ebc8126c.js" crossorigin="anonymous"></script>
 
-    <script src="js/main.js"></script>
-
-
-    <script>
-        $(document).ready(function() {
-
-
-            // Adiciona um evento de clique ao botão de like
-            $(".like-button").click(function() {
-
-
-
-                // Obtém o ID do post do atributo de data
-                var postId = $(this).data("post-id");
-                console.log("Post ID:",
-                    postId); // Verifique se o ID do post está sendo capturado corretamente
-                // Envia uma requisição AJAX para o servidor
-                $.ajax({
-                    url: "update_like.php", // Arquivo PHP para processar a requisição
-                    type: "POST",
-                    data: {
-                        post_id: postId
-                    }, // Dados enviados para o servidor
-                    success: function(response) {
-                        console.log("Response:",
-                            response); // Verifique se o servidor está respondendo corretamente
-
-                        location.reload();
-
-
-
-                    },
-                    error: function(xhr, status, error) {
-                        console.error("Error:",
-                            error); // Verifique se há erros na requisição AJAX
-                    }
-                });
-            });
-        });
-    </script>
 </body>
 
 </html>

@@ -43,13 +43,21 @@ if (isset($_GET['user_id']) && !empty($_GET['user_id'])) {
     $user_id = $_GET['user_id'];
 
     // Executa a consulta SQL usando o ID do usuário
-    $result = pg_query($conn, "SELECT users.user_name, users.user_image, posts.post_date, posts.post_text, posts.post_id, posts.post_like
+    $result = pg_query($conn, "SELECT users.user_name, users.user_image, users.description, posts.post_date, posts.post_text, posts.post_id, posts.post_like
                                FROM posts 
                                INNER JOIN users ON posts.user_id = users.id
                                WHERE users.id = $user_id
                                ORDER BY posts.post_id DESC");
 
     $profie = pg_fetch_all($result) ?: [];
+
+
+    $resultImage = pg_query($conn, "SELECT users.user_name, users.user_image, users.description
+    FROM users 
+    WHERE users.id = $user_id
+    ");
+
+    $profieInfo = pg_fetch_all($resultImage) ?: [];
 }
 
 updateProfie($conn);
@@ -77,25 +85,7 @@ pg_close($conn);
         <img src="images/preload.gif" alt="" />
     </div>
 
-    <nav>
-        <div class="container">
-            <a href="home.php">
-                <h2 class="logo"><img src="images/logo.png" alt="" />Scribbli</h2>
-            </a>
-
-            <div class="search-bar">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="search" placeholder="pesquisar pessoas" />
-            </div>
-
-            <div class="create">
-                <label for="create-post" class="btn btn-primary">Criar</label>
-                <div class="profie-picture">
-                    <img src="<?= $user_data['user_image'] ?>" alt="" />
-                </div>
-            </div>
-        </div>
-    </nav>
+    <?php require_once("templates/nav.php") ?>
 
     <main class="">
         <div class="container">
@@ -166,31 +156,68 @@ pg_close($conn);
 
                     </div>
 
-                    <?php if (!empty($profie)) : ?>
-                        <div class="profie-details">
-                            <?php $profie_user = $profie[0]; // Apenas um dos usuários é suficiente para exibir os detalhes do perfil 
-                            ?>
-                            <div class="profie-details-left">
-                                <div class="profie-details-row">
-                                    <img src="<?= $profie_user['user_image']; ?>" alt="" class="profie-details-image">
-                                    <div>
-                                        <h3><?= $profie_user['user_name']; ?></h3>
+                    <?php if (empty($profie)) :  ?>
+                        <?php foreach ($profieInfo as $profie_user) : ?>
+                            <div class="profie-details">
 
-                                        <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Nostrum, a.</p>
+                                <div class="profie-details-left">
+                                    <div class="profie-details-row">
+                                        <img src="<?= $profie_user['user_image']; ?>" alt="" class="profie-details-image">
+                                        <div>
+                                            <h3><?= $profie_user['user_name']; ?></h3>
+
+                                            <?php if (isset($profie_user['description']) && !empty($profie_user['description'])) : ?>
+                                                <p><?= $profie_user['description']; ?></p>
+                                            <?php else : ?>
+                                                <p></p>
+                                            <?php endif; ?>
+                                        </div>
                                     </div>
                                 </div>
+                                <div class="profie-deitals-right">
+                                    <button type="button" id="message"><i class="fa-solid fa-message"></i>Message</button>
+                                </div>
                             </div>
-                            <div class="profie-deitals-right">
-                                <button type="button"><i class="fa-solid fa-message"></i>Message</button>
+                        <?php endforeach ?>
+                    <?php else : ?>
+
+
+
+                        <?php if (!empty($profie)) : ?>
+                            <div class="profie-details">
+                                <?php $profie_user = $profie[0];
+                                ?>
+                                <div class="profie-details-left">
+                                    <div class="profie-details-row">
+                                        <img src="<?= $profie_user['user_image']; ?>" alt="" class="profie-details-image">
+                                        <div>
+                                            <h3><?= $profie_user['user_name']; ?></h3>
+
+                                            <?php if (isset($profie_user['description']) && !empty($profie_user['description'])) : ?>
+                                                <p><?= $profie_user['description']; ?></p>
+                                            <?php else : ?>
+                                                <p></p>
+                                            <?php endif; ?>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="profie-deitals-right">
+                                    <button type="button"><i class="fa-solid fa-message"></i>Message</button>
+                                </div>
                             </div>
-                        </div>
+                        <?php endif; ?>
+
                     <?php endif; ?>
+
 
                 </div>
 
 
 
                 <div class="feeds">
+
+
 
                     <?php foreach ($profie as $profie_user) : ?>
                         <div class="feed">
@@ -228,7 +255,6 @@ pg_close($conn);
 
                         </div>
                     <?php endforeach; ?>
-
                 </div>
 
                 <div class="left">
@@ -237,95 +263,8 @@ pg_close($conn);
             </div>
     </main>
 
-    <div class="customize-theme">
-        <div class="card">
-            <h2>Configurar Layout</h2>
+    <?php require_once("templates/footer.php") ?>
 
-            <div class="background">
-                <h4>Background</h4>
-
-                <div class="choose-bg">
-                    <div class="bg-1 active">
-                        <span class=""></span>
-                        <h5 for="bg-1">Light</h5>
-                    </div>
-
-                    <div class="bg-2">
-                        <span class=""></span>
-                        <h5 for="bg-2">Dim</h5>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <section id="user-info" class="modal-user">
-        <div class="container">
-
-            <div class="user-config form">
-                <h1>Alterar dados</h1>
-
-                <form action="#" method="POST" name="user-info-form" enctype="multipart/form-data">
-                    <label for="Nome">Nome:</label>
-                    <input type="text" value="<?= $user_data['user_name'] ?>" name="name" required>
-                    <label for="">Email:</label>
-                    <input type="email" value="<?= $user_data['user_email'] ?>" name="email" required>
-
-                    <label for="file-upload" class="custom-file-upload">Mudar foto de perfil</label>
-                    <input id="file-upload" type="file" accept=".jpg, .jpeg, .png" name="image" />
-
-                    <input type="submit" class="button" value="Salvar" name="btn-salve">
-                </form>
-
-            </div>
-
-        </div>
-    </section>
-
-
-
-    <script src="https://kit.fontawesome.com/77ebc8126c.js" crossorigin="anonymous"></script>
-
-    <script src="js/main.js"></script>
-
-
-    <script>
-        $(document).ready(function() {
-
-
-            // Adiciona um evento de clique ao botão de like
-            $(".like-button").click(function() {
-
-
-
-                // Obtém o ID do post do atributo de data
-                var postId = $(this).data("post-id");
-                console.log("Post ID:",
-                    postId); // Verifique se o ID do post está sendo capturado corretamente
-                // Envia uma requisição AJAX para o servidor
-                $.ajax({
-                    url: "update_like.php", // Arquivo PHP para processar a requisição
-                    type: "POST",
-                    data: {
-                        post_id: postId
-                    }, // Dados enviados para o servidor
-                    success: function(response) {
-                        console.log("Response:",
-                            response); // Verifique se o servidor está respondendo corretamente
-
-                        location.reload();
-
-
-
-                    },
-                    error: function(xhr, status, error) {
-                        console.error("Error:",
-                            error); // Verifique se há erros na requisição AJAX
-                    }
-                });
-            });
-        });
-    </script>
 </body>
 
 </html>

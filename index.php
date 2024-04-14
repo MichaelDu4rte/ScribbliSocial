@@ -47,8 +47,7 @@ userLoginOrRegister($conn);
                             </div>
 
                             <div class="input-wrap">
-                                <input type="password" name="password" class="input-field" autocomplete="off"
-                                    required />
+                                <input type="password" name="password" class="input-field" autocomplete="off" required />
                                 <label>Senha</label>
                             </div>
 
@@ -70,8 +69,7 @@ userLoginOrRegister($conn);
 
                         <div class="actual-form">
                             <div class="input-wrap">
-                                <input type="text" name="user_name" minlength="4" class="input-field" autocomplete="off"
-                                    required />
+                                <input type="text" name="user_name" minlength="4" class="input-field" autocomplete="off" required />
                                 <label>Nome</label>
                             </div>
 
@@ -81,8 +79,7 @@ userLoginOrRegister($conn);
                             </div>
 
                             <div class="input-wrap">
-                                <input type="password" name="password" minlength="5" class="input-field"
-                                    autocomplete="off" required />
+                                <input type="password" name="password" minlength="5" class="input-field" autocomplete="off" required />
                                 <label>Senha</label>
                             </div>
 

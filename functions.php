@@ -98,6 +98,7 @@ function updateProfie($conn)
         // Obtém os valores do formulário
         $user_name = $_POST["name"];
         $user_email = $_POST["email"];
+        $user_description = $_POST["description"];
         $user_data = check_login($conn);
 
         // Pasta onde as imagens serão armazenadas
@@ -116,7 +117,7 @@ function updateProfie($conn)
 
         if (move_uploaded_file($_FILES["image"]["tmp_name"], $target_file)) {
             // Prepara a instrução SQL para atualizar os dados do usuário
-            $sql = "UPDATE users SET user_name='$user_name', user_email='$user_email', user_image='$target_file' WHERE id = {$user_data['id']}";
+            $sql = "UPDATE users SET user_name='$user_name', user_email='$user_email', user_image='$target_file', description='$user_description' WHERE id = {$user_data['id']}";
 
             // Executa a instrução SQL
             $result = pg_query($conn, $sql);

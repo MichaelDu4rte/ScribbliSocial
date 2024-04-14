@@ -9,6 +9,7 @@ const bg3 = document.querySelector('.bg-3');
 var profileLink = document.getElementById("profie");
 var modal = document.getElementById("user-info");
 
+
 const changeActiveItem = () => menuItems.forEach(item => item.classList.remove('active'));
 
 // Attaches click event listeners to menu items
@@ -133,9 +134,13 @@ profileLink.addEventListener("click", function(event) {
     modal.style.display = "block";
 });
 
+
 // Fecha o modal se o usuário clicar fora da área do modal
 window.onclick = function(event) {
     if (event.target == modal) {
         modal.style.display = "none";
     }
 }
+
+
+
