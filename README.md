@@ -1,12 +1,14 @@
 
 # Scribbli
 
-Criar, editar codigos html, css e javascript ao vivo pela web
+Scribbli é uma rede social completa e moderna
 
 ## Apresentação
 
-![alt text](https://i.imgur.com/GnKxJt4.png)
-
+![alt text](https://i.imgur.com/BGLsP74.png)
+![alt text](https://i.imgur.com/UZVORUc.png)
+![alt text](https://i.imgur.com/wLUFNYb.png)
+![alt text](https://i.imgur.com/LeMf4TK.png)
 
 ## Funcionalidades
 
@@ -22,9 +24,3 @@ Criar, editar codigos html, css e javascript ao vivo pela web
 ## Autores
 
 - [@MichaelDu4rte](https://github.com/MichaelDu4rte)
-
-
-
-
-
-
